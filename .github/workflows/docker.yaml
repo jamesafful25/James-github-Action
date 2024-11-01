@@ -1,8 +1,10 @@
 name: Docker Workflow
 
 on:
-  - push
-  
+  push:
+    branches:
+      - main  # Specify the branch that should trigger this workflow
+
 jobs: 
   docker_build: 
     runs-on: ubuntu-latest
@@ -14,7 +16,9 @@ jobs:
       run: docker build -t resume-app:latest -f .github/workflows/resume-app/Dockerfile .
 
     - name: Docker Login
-      run: docker login --username=jamesafful25 --password=Mankind9042@
+      env:
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  # Store password as a secret
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username=jamesafful25 --password-stdin
 
     - name: Docker Publish 
       run: docker push docker.io/jamesafful25/resume-app:latest
@@ -25,7 +29,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
       - name: Docker Login
-        run: docker login --username=jamesafful25 --password=Mankind9042@
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  # Store password as a secret
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username=jamesafful25 --password-stdin
+
       - name: Docker Run
         run: docker run -d -p 8080:80 docker.io/jamesafful25/resume-app:latest
