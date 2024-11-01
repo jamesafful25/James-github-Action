@@ -1,16 +1,19 @@
 name: Docker Workflow
 
 on:
-  push:
-    branches:
-      - main  # Specify the branch that should trigger this workflow
-
+ - push
+    
 jobs: 
   docker_build: 
     runs-on: ubuntu-latest
     steps: 
     - name: Checkout Code
       uses: actions/checkout@v4
+
+    - name: Debugging Info
+      run: |
+        echo "Listing .github/workflows/resume-app/"
+        ls -al .github/workflows/resume-app/
 
     - name: Docker Build 
       run: docker build -t resume-app:latest -f .github/workflows/resume-app/Dockerfile .
